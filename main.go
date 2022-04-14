@@ -64,18 +64,28 @@ func main() {
 	//	fmt.Println(counter.Get("get.called"))
 	//	time.Sleep(1 * time.Second)
 	//}
-	start := time.Now()
 
-	counter.Incr("get.called", 123)
-	counter.Incr("get.called", 456)
+	//var a = time.Millisecond
+	//fmt.Println(a)
+	var timeSum = time.Millisecond
 	for i := 0; i < 10000; i++ {
-		counter.Incr("get.called", 1)
+		start := time.Now()
+		//fmt.Println("start:", start)
+
+		counter.Incr("get.called", 123)
+		counter.Incr("get.called", 456)
+		for i := 0; i < 10000; i++ {
+			counter.Incr("get.called", 1)
+		}
+
+		//println(counter.Get("get.called"))
+		cost := time.Since(start)
+		timeSum += cost
+		//fmt.Println("cost:", cost)
+		//timeSum += float64(cost)
 	}
+	fmt.Println(timeSum - time.Millisecond)
 
-	println(counter.Get("get.called"))
-
-	cost := time.Since(start)
-	fmt.Println("cost:", cost)
 	//time.Sleep(6 * time.Second)
 	//println(counter.Get("get.called"))
 	//
