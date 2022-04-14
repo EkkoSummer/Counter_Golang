@@ -57,18 +57,40 @@ func main() {
 		println("Flushing... counter")
 	}
 	c.Flush2Broker(5000, FuncCbFlush)
-	c.Incr("get.called", 123)
-	c.Incr("get.called", 456)
+
+	var timeSum = time.Millisecond
 	for i := 0; i < 10000; i++ {
-		c.Incr("get.called", 1)
+		start := time.Now()
+		//fmt.Println("start:", start)
+
+		c.Incr("get.called", 123)
+		c.Incr("get.called", 456)
+
+		for i := 0; i < 10000; i++ {
+			c.Incr("get.called", 1)
+		}
+
+		//println(counter.Get("get.called"))
+		cost := time.Since(start)
+		timeSum += cost
+		//fmt.Println("cost:", cost)
+		//timeSum += float64(cost)
 	}
+	fmt.Println((timeSum - time.Millisecond) / 10000)
 
-	println(c.Get("get.called"))
+	//c.Incr("get.called", 123)
+	//c.Incr("get.called", 456)
+	//for i := 0; i < 10000; i++ {
+	//	c.Incr("get.called", 1)
+	//}
+	//
+	//println(c.Get("get.called"))
+	//
+	//time.Sleep(6 * time.Second)
+	//println(c.Get("get.called"))
+	//
+	//time.Sleep(6 * time.Second)
 
-	time.Sleep(6 * time.Second)
-	println(c.Get("get.called"))
-
-	time.Sleep(6 * time.Second)
 	//counter.m["res"] = 0
 	//
 	//counter.Lock()
