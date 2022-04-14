@@ -84,7 +84,7 @@ func main() {
 		//fmt.Println("cost:", cost)
 		//timeSum += float64(cost)
 	}
-	fmt.Println(timeSum - time.Millisecond)
+	fmt.Println((timeSum - time.Millisecond) / 10000)
 
 	//time.Sleep(6 * time.Second)
 	//println(counter.Get("get.called"))
