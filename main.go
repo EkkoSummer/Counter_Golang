@@ -64,6 +64,7 @@ func main() {
 	//	fmt.Println(counter.Get("get.called"))
 	//	time.Sleep(1 * time.Second)
 	//}
+	start := time.Now()
 
 	counter.Incr("get.called", 123)
 	counter.Incr("get.called", 456)
@@ -73,8 +74,11 @@ func main() {
 
 	println(counter.Get("get.called"))
 
-	time.Sleep(6 * time.Second)
-	println(counter.Get("get.called"))
+	cost := time.Since(start)
+	fmt.Println("cost:", cost)
+	//time.Sleep(6 * time.Second)
+	//println(counter.Get("get.called"))
+	//
+	//time.Sleep(6 * time.Second)
 
-	time.Sleep(6 * time.Second)
 }
