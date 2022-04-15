@@ -40,7 +40,7 @@ func (c *Counter) Flush2Broker(ms int, FuncCbFlush func()) {
 		go func() {
 			for range ticker.C {
 				//每5秒重置一次计数器，一秒一次
-				fmt.Printf("每%.2fs重置计数器\n", float64(ms/1000))
+				// fmt.Printf("每%.2fs重置计数器\n", float64(ms/1000))
 				FuncCbFlush()
 			}
 		}()
@@ -84,7 +84,7 @@ func Test() {
 		//fmt.Println("cost:", cost)
 		//timeSum += float64(cost)
 	}
-	fmt.Println((timeSum - time.Millisecond) / 10000)
+	fmt.Println("平均运行时间：",(timeSum - time.Millisecond) / 10000)
 
 	//time.Sleep(6 * time.Second)
 	//println(counter.Get("get.called"))

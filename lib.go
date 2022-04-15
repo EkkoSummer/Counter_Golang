@@ -54,7 +54,7 @@ func Test() {
 
 	FuncCbFlush := func() {
 		c.Init()
-		println("Flushing... counter")
+		// println("Flushing... counter")
 	}
 	c.Flush2Broker(5000, FuncCbFlush)
 
@@ -76,7 +76,7 @@ func Test() {
 		//fmt.Println("cost:", cost)
 		//timeSum += float64(cost)
 	}
-	fmt.Println((timeSum - time.Millisecond) / 10000)
+	fmt.Println("平均运行时间：", (timeSum-time.Millisecond)/10000)
 
 	//c.Incr("get.called", 123)
 	//c.Incr("get.called", 456)
