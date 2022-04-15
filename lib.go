@@ -48,7 +48,7 @@ func (c *Counter) Flush2Broker(ms int, FuncCbFlush func()) {
 	}()
 }
 
-func test() {
+func Test() {
 	c := &Counter{}
 	c.Init()
 
@@ -111,3 +111,4 @@ func test() {
 	//	counter.Unlock()
 
 }
+

@@ -1,6 +1,3 @@
-//写一个异步加法：+123，+456
-//安全：counter struct
-//每五秒重置一次
 package another
 
 import (
@@ -10,27 +7,29 @@ import (
 )
 
 type Counter struct {
-	mu *sync.RWMutex
-	m  map[string]int
-} //{m: make(map[string]int)}
-
-func (c *Counter) Incr(s string, a int) {
-	c.mu.Lock()
-	c.m[s] += a
-	c.mu.Unlock()
+	//线程安全：并发时只读
+	M *sync.Map
 }
 
-func (c *Counter) Get(s string) int {
-	var res int
-	c.mu.RLock()
-	res = c.m[s]
-	c.mu.RUnlock()
-	return res
+func (c *Counter) Incr(s interface{}, n int) {
+	//成功读取则累加
+	if addend, loadSuccess := c.M.LoadOrStore(s, n); loadSuccess {
+		c.M.Store(s, addend.(int)+n)
+	}
 }
 
 func (c *Counter) Init() {
-	c.mu = new(sync.RWMutex)
-	c.m = make(map[string]int)
+	*c = Counter{new(sync.Map)}
+}
+
+//获取数据，如果成功则返回累加结果
+func (c *Counter) Get(s interface{}) int {
+	addend, loadSuccess := c.M.Load(s)
+	if loadSuccess {
+		return addend.(int)
+	} else {
+		return 0
+	}
 }
 
 func (c *Counter) Flush2Broker(ms int, FuncCbFlush func()) {
@@ -38,36 +37,45 @@ func (c *Counter) Flush2Broker(ms int, FuncCbFlush func()) {
 		//类型转换：int->时间类型（毫秒）
 		ticker := time.NewTicker(time.Millisecond * time.Duration(ms))
 		//异步
-
-		for range ticker.C {
-			//每5秒重置一次计数器，一秒一次
-			fmt.Printf("每%.2fs重置计数器\n", float64(ms/1000))
-			// c.Init()
-			FuncCbFlush()
-		}
+		go func() {
+			for range ticker.C {
+				//每5秒重置一次计数器，一秒一次
+				fmt.Printf("每%.2fs重置计数器\n", float64(ms/1000))
+				FuncCbFlush()
+			}
+		}()
 	}()
 }
 
-func test() {
-	c := &Counter{}
+// 重置计数器
+func (c *Counter) FuncCbFlush() {
 	c.Init()
+}
 
-	FuncCbFlush := func() {
-		c.Init()
-		println("Flushing... counter")
-	}
-	c.Flush2Broker(5000, FuncCbFlush)
+func Test() {
+	counter := &Counter{}
+	counter.Init()
+	counter.Flush2Broker(5000, counter.FuncCbFlush)
+	//counter.Incr("get.called", 123)
+	//counter.Incr("get.called", 456)
 
+	//for i := 0; i < 12; i++ {
+	//	counter.Incr("get.called", 1)
+	//	fmt.Println(counter.Get("get.called"))
+	//	time.Sleep(1 * time.Second)
+	//}
+
+	//var a = time.Millisecond
+	//fmt.Println(a)
 	var timeSum = time.Millisecond
 	for i := 0; i < 10000; i++ {
 		start := time.Now()
 		//fmt.Println("start:", start)
 
-		c.Incr("get.called", 123)
-		c.Incr("get.called", 456)
-
+		counter.Incr("get.called", 123)
+		counter.Incr("get.called", 456)
 		for i := 0; i < 10000; i++ {
-			c.Incr("get.called", 1)
+			counter.Incr("get.called", 1)
 		}
 
 		//println(counter.Get("get.called"))
@@ -78,36 +86,9 @@ func test() {
 	}
 	fmt.Println((timeSum - time.Millisecond) / 10000)
 
-	//c.Incr("get.called", 123)
-	//c.Incr("get.called", 456)
-	//for i := 0; i < 10000; i++ {
-	//	c.Incr("get.called", 1)
-	//}
-	//
-	//println(c.Get("get.called"))
+	//time.Sleep(6 * time.Second)
+	//println(counter.Get("get.called"))
 	//
 	//time.Sleep(6 * time.Second)
-	//println(c.Get("get.called"))
-	//
-	//time.Sleep(6 * time.Second)
-
-	//counter.m["res"] = 0
-	//
-	//counter.Lock()
-	//counter.m["res"] += 456
-	//counter.Unlock()
-	//
-	//for i := 0; i < 12; i++ {
-	//	counter.Lock()
-	//	counter.m["res"] += 123
-	//	fmt.Println(counter.m["res"])
-	//	time.Sleep(1 * time.Second)
-	//	counter.Unlock()
-	//
-	//	counter.Lock()
-	//	counter.m["res"] += 456
-	//	fmt.Println(counter.m["res"])
-	//	time.Sleep(1 * time.Second)
-	//	counter.Unlock()
 
 }
