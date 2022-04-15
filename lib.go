@@ -1,7 +1,7 @@
 //写一个异步加法：+123，+456
 //安全：counter struct
 //每五秒重置一次
-package main
+package counter
 
 import (
 	"fmt"
@@ -48,7 +48,7 @@ func (c *Counter) Flush2Broker(ms int, FuncCbFlush func()) {
 	}()
 }
 
-func main() {
+func test() {
 	c := &Counter{}
 	c.Init()
 
