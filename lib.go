@@ -1,7 +1,7 @@
 //写一个异步加法：+123，+456
 //安全：counter struct
 //每五秒重置一次
-package counter
+package Counter_Golang
 
 import (
 	"fmt"
@@ -111,4 +111,3 @@ func Test() {
 	//	counter.Unlock()
 
 }
-

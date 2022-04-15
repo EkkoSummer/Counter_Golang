@@ -1,11 +1,11 @@
 package main
 
 import (
-	"counter"
-	"counter/another"
+	"github.com/EkkoSummer/Counter_Golang"
+	"github.com/EkkoSummer/Counter_Golang/another"
 )
 
 func main() {
-	counter.Test()
+	Counter_Golang.Test()
 	another.Test()
 }
