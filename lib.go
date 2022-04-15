@@ -41,7 +41,7 @@ func (c *Counter) Flush2Broker(ms int, FuncCbFlush func()) {
 
 		for range ticker.C {
 			//每5秒重置一次计数器，一秒一次
-			fmt.Printf("每%.2fs重置计数器\n", float64(ms/1000))
+			// fmt.Printf("每%.2fs重置计数器\n", float64(ms/1000))
 			// c.Init()
 			FuncCbFlush()
 		}
